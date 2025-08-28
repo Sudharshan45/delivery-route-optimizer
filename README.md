@@ -80,8 +80,9 @@ Orders (2):
 delivery-route-optimizer/
 ├── src/main/java/com/deliveryoptimizer/
 │   ├── DeliveryOptimizationApp.java          # Main application
-│   ├── controller/
-│   │   └── DeliveryRouteOptimizationController.java
+│   ├── DeliveryRouteOptimizationContext.java # Context for optimization
+│   ├── constants/                           # Constants and enums
+│   │   └── PriorityEnum.java
 │   ├── core/                                # Core business entities
 │   │   ├── DeliveryOrder.java
 │   │   ├── Location.java
@@ -100,13 +101,10 @@ delivery-route-optimizer/
 │   ├── scenariofactory/                     # Test data generation
 │   │   ├── DeliveryScenario.java
 │   │   └── DeliveryScenarioFactory.java
-│   ├── util/
-│   │   └── TaskSequenceGenerator.java
-│   └── commonenum/
-│       └── Priority.java
+│   └── util/                               # Utility classes
+│       └── TaskSequenceGenerator.java
 ├── pom.xml                                  # Maven configuration
 ├── CLASS_DIAGRAM.md                         # UML documentation
-└── PROJECT_STRUCTURE.md                     # Detailed structure guide
 ```
 
 ## 🎨 UML Class Diagram

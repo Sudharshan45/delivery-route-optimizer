@@ -1,15 +1,15 @@
-package com.deliveryoptimizer.commonenum;
+package com.deliveryoptimizer.constants;
 
 /**
  * Priority levels for delivery orders
  * Common enum used across the delivery optimization system
  */
-public enum Priority {
+public enum PriorityEnum {
     LOW(1), MEDIUM(2), HIGH(3);
     
     private final int weight;
     
-    Priority(int weight) {
+    PriorityEnum(int weight) {
         this.weight = weight;
     }
     

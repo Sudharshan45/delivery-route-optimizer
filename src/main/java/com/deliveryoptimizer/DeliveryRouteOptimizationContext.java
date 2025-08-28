@@ -1,4 +1,4 @@
-package com.deliveryoptimizer.controller;
+package com.deliveryoptimizer;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ import com.deliveryoptimizer.loggingobserver.RouteOptimizationObserver;
  * Uses Strategy pattern for different optimization algorithms
  * Manages business logic and coordinates between components
  */
-public class DeliveryRouteOptimizationController {
+public class DeliveryRouteOptimizationContext {
     
     private RouteOptimizationStrategy optimizationStrategy;
     private DistanceCalculator distanceCalculator;
@@ -24,14 +24,14 @@ public class DeliveryRouteOptimizationController {
     private List<RouteOptimizationObserver> observers;
     
     // Default constructor with reasonable defaults
-    public DeliveryRouteOptimizationController() {
+    public DeliveryRouteOptimizationContext() {
     this.optimizationStrategy = new ExhaustiveSearchOptimizationStrategy();
         this.distanceCalculator = new HaversineDistanceCalculator();
         this.averageSpeedKmh = 20.0; // As mentioned in problem statement
         this.observers = new ArrayList<>();
     }
     
-    public DeliveryRouteOptimizationController(RouteOptimizationStrategy optimizationStrategy,
+    public DeliveryRouteOptimizationContext(RouteOptimizationStrategy optimizationStrategy,
                                              DistanceCalculator distanceCalculator,
                                              double averageSpeedKmh) {
         this.optimizationStrategy = optimizationStrategy;

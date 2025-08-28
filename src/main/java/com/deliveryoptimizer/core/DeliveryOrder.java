@@ -1,6 +1,6 @@
 package com.deliveryoptimizer.core;
 
-import com.deliveryoptimizer.commonenum.Priority;
+import com.deliveryoptimizer.constants.PriorityEnum;
 
 /**
  * Represents a delivery order with restaurant, consumer, and priority information
@@ -12,10 +12,10 @@ public class DeliveryOrder {
     private final Location restaurantLocation;
     private final Location consumerLocation;
     private final int preparationTimeMinutes;
-    private final Priority priority;
+    private final PriorityEnum priority;
     
     public DeliveryOrder(String orderId, Location restaurantLocation, Location consumerLocation, 
-                        int preparationTimeMinutes, Priority priority) {
+                        int preparationTimeMinutes, PriorityEnum priority) {
         this.orderId = orderId;
         this.restaurantLocation = restaurantLocation;
         this.consumerLocation = consumerLocation;
@@ -26,7 +26,7 @@ public class DeliveryOrder {
     // Convenience constructor with default medium priority
     public DeliveryOrder(String orderId, Location restaurantLocation, Location consumerLocation, 
                         int preparationTimeMinutes) {
-        this(orderId, restaurantLocation, consumerLocation, preparationTimeMinutes, Priority.MEDIUM);
+        this(orderId, restaurantLocation, consumerLocation, preparationTimeMinutes, PriorityEnum.MEDIUM);
     }
     
     public String getOrderId() {
@@ -45,7 +45,7 @@ public class DeliveryOrder {
         return preparationTimeMinutes;
     }
     
-    public Priority getPriority() {
+    public PriorityEnum getPriority() {
         return priority;
     }
     

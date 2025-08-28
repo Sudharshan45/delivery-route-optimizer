@@ -23,13 +23,12 @@ classDiagram
     }
 
     class DeliveryOrder {
-        <<enumeration>> Priority
         -String orderId
         -Location restaurantLocation
         -Location consumerLocation
         -int preparationTimeMinutes
-        -Priority priority
-        +DeliveryOrder(String, Location, Location, int, Priority)
+        -PriorityEnum priority
+        +DeliveryOrder(String, Location, Location, int, PriorityEnum)
         +DeliveryOrder(String, Location, Location, int)
         +String getOrderId()
         +Location getRestaurantLocation()
@@ -37,19 +36,20 @@ classDiagram
         +Location getRestaurant()
         +Location getConsumer()
         +int getPreparationTimeMinutes()
-        +Priority getPriority()
+        +PriorityEnum getPriority()
         +boolean equals(Object)
         +int hashCode()
         +String toString()
     }
 
-    class Priority {
+    class PriorityEnum {
         <<enumeration>>
-        LOW(1)
-        MEDIUM(2) 
-        HIGH(3)
+        LOW
+        MEDIUM
+        HIGH
         -int weight
         +int getWeight()
+        +String toString()
     }
 
     class RouteResult {
@@ -81,6 +81,17 @@ classDiagram
         +String toString()
     }
 
+    class Task {
+        -int orderIndex
+        -boolean isPickup
+        -Location location
+        +Task(int, boolean, Location)
+        +int getOrderIndex()
+        +boolean isPickup()
+        +Location getLocation()
+        +String toString()
+    }
+
     %% Strategy Pattern
     class RouteOptimizationStrategy {
         <<interface>>
@@ -88,21 +99,7 @@ classDiagram
         +String getStrategyName()
     }
 
-    class BruteForceOptimizationStrategy {
-        +RouteResult optimizeRoute(Location, List~DeliveryOrder~, DistanceCalculator, double)
-        +String getStrategyName()
-        -RouteResult calculateRouteTime(Location, List~DeliveryOrder~, List~Integer~, DistanceCalculator, double)
-        -List~List~Integer~~ generatePermutations(List~Integer~)
-    }
-
-    class GreedyNearestNeighborStrategy {
-        +RouteResult optimizeRoute(Location, List~DeliveryOrder~, DistanceCalculator, double)
-        +String getStrategyName()
-        -DeliveryOrder findNearestOrder(Location, List~DeliveryOrder~, Set~String~, DistanceCalculator)
-        -void executeOrder(DeliveryOrder, Location, List~String~, List~String~, DistanceCalculator, double, double)
-    }
-
-    class PriorityBasedOptimizationStrategy {
+    class ExhaustiveSearchOptimizationStrategy {
         +RouteResult optimizeRoute(Location, List~DeliveryOrder~, DistanceCalculator, double)
         +String getStrategyName()
     }
@@ -115,7 +112,7 @@ classDiagram
     }
 
     class HaversineDistanceCalculator {
-        -double EARTH_RADIUS_KM = 6371.0
+        -double EARTH_RADIUS_KM
         +double calculateDistance(Location, Location)
     }
 
@@ -155,86 +152,60 @@ classDiagram
 
     class DeliveryScenarioFactory {
         <<utility>>
-        +DeliveryScenario createBasicScenario()$
-        +DeliveryScenario createComplexScenario()$
-        +DeliveryScenario createEdgeCaseScenario()$
-        +DeliveryScenario createPerformanceTestScenario()$
+        +DeliveryScenario createBasicScenario()
+        +DeliveryScenario createComplexScenario()
+        +DeliveryScenario createEdgeCaseScenario()
+        +DeliveryScenario createPerformanceTestScenario()
     }
 
-    %% Context and Main Classes
-    class DeliveryRouteOptimizerContext {
-        -RouteOptimizationStrategy strategy
+    %% Context and App Classes
+    class DeliveryRouteOptimizationContext {
+        -RouteOptimizationStrategy optimizationStrategy
         -DistanceCalculator distanceCalculator
         -double averageSpeedKmh
-        +DeliveryRouteOptimizerContext()
-        +DeliveryRouteOptimizerContext(RouteOptimizationStrategy, DistanceCalculator, double)
-        +void setStrategy(RouteOptimizationStrategy)
-        +RouteResult findOptimalRoute(Location, List~DeliveryOrder~)
-        +List~RouteResult~ compareStrategies(Location, List~DeliveryOrder~)
-        +double calculateTotalDistance(Location, List~DeliveryOrder~, List~String~)
+        -List~RouteOptimizationObserver~ observers
+        +DeliveryRouteOptimizationContext()
+        +DeliveryRouteOptimizationContext(RouteOptimizationStrategy, DistanceCalculator, double)
+        +void setOptimizationStrategy(RouteOptimizationStrategy)
+        +void setDistanceCalculator(DistanceCalculator)
+        +void setAverageSpeedKmh(double)
+        +void addObserver(RouteOptimizationObserver)
+        +void removeObserver(RouteOptimizationObserver)
+        +RouteResult optimizeRoute(Location, List~DeliveryOrder~)
+        +List~RouteResult~ compareOptimizationStrategies(Location, List~DeliveryOrder~)
+        +RouteResult findBestRoute(Location, List~DeliveryOrder~)
+        +double calculateRouteDistance(Location, List~DeliveryOrder~, List~String~)
     }
 
     class DeliveryOptimizationApp {
-        +void main(String[])$
-        -void demonstrateBasicScenario(ConsoleOptimizationLogger)$
-        -void demonstrateStrategyComparison(ConsoleOptimizationLogger)$
-        -void demonstrateComplexScenario(ConsoleOptimizationLogger)$
-        -void performanceAnalysis(ConsoleOptimizationLogger)$
-    }
-
-    class DeliveryDataGenerator {
-        <<utility>>
-        -String[] RESTAURANT_NAMES$
-        -String[] CONSUMER_NAMES$
-        -String[] AREA_NAMES$
-        +Location generateRandomLocation()$
-        +Location generateRandomLocation(double, double, double, double)$
-        +DeliveryOrder generateRandomOrder()$
-        +DeliveryOrder[] generateRandomOrders(int, double, double, double)$
-        +DeliveryScenario generateCityScenario(int)$
-        +DeliveryScenario generatePriorityTestScenario()$
-    }
-
-    class Main {
-        +void main(String[])$
+        +void main(String[])
     }
 
     %% Relationships
     
     %% Composition and Aggregation
-    DeliveryOrder *-- Priority : contains
+    DeliveryOrder *-- PriorityEnum : priority
     DeliveryOrder *-- Location : restaurantLocation
     DeliveryOrder *-- Location : consumerLocation
     RouteAction *-- Location : currentLocation
     DeliveryScenario *-- Location : startLocation
     DeliveryScenario o-- DeliveryOrder : orders
-    DeliveryRouteOptimizerContext *-- RouteOptimizationStrategy : strategy
-    DeliveryRouteOptimizerContext *-- DistanceCalculator : distanceCalculator
+    DeliveryRouteOptimizationContext *-- RouteOptimizationStrategy : optimizationStrategy
+    DeliveryRouteOptimizationContext *-- DistanceCalculator : distanceCalculator
+    DeliveryRouteOptimizationContext o-- RouteOptimizationObserver : observers
 
     %% Strategy Pattern Implementation
-    RouteOptimizationStrategy <|.. BruteForceOptimizationStrategy : implements
-    RouteOptimizationStrategy <|.. GreedyNearestNeighborStrategy : implements
-    RouteOptimizationStrategy <|.. PriorityBasedOptimizationStrategy : implements
+    RouteOptimizationStrategy <|.. ExhaustiveSearchOptimizationStrategy : implements
     DistanceCalculator <|.. HaversineDistanceCalculator : implements
 
     %% Observer Pattern Implementation
     RouteOptimizationObserver <|.. ConsoleOptimizationLogger : implements
 
     %% Dependencies and Usage
-    BruteForceOptimizationStrategy ..> Location : uses
-    BruteForceOptimizationStrategy ..> DeliveryOrder : uses
-    BruteForceOptimizationStrategy ..> RouteResult : creates
-    BruteForceOptimizationStrategy ..> DistanceCalculator : uses
-
-    GreedyNearestNeighborStrategy ..> Location : uses
-    GreedyNearestNeighborStrategy ..> DeliveryOrder : uses
-    GreedyNearestNeighborStrategy ..> RouteResult : creates
-    GreedyNearestNeighborStrategy ..> DistanceCalculator : uses
-
-    PriorityBasedOptimizationStrategy ..> Location : uses
-    PriorityBasedOptimizationStrategy ..> DeliveryOrder : uses
-    PriorityBasedOptimizationStrategy ..> RouteResult : creates
-    PriorityBasedOptimizationStrategy ..> DistanceCalculator : uses
+    ExhaustiveSearchOptimizationStrategy ..> Location : uses
+    ExhaustiveSearchOptimizationStrategy ..> DeliveryOrder : uses
+    ExhaustiveSearchOptimizationStrategy ..> RouteResult : creates
+    ExhaustiveSearchOptimizationStrategy ..> DistanceCalculator : uses
 
     HaversineDistanceCalculator ..> Location : uses
 
@@ -242,26 +213,17 @@ classDiagram
     DeliveryScenarioFactory ..> Location : creates
     DeliveryScenarioFactory ..> DeliveryOrder : creates
 
-    DeliveryDataGenerator ..> Location : creates
-    DeliveryDataGenerator ..> DeliveryOrder : creates
-    DeliveryDataGenerator ..> DeliveryScenario : creates
-
-    DeliveryOptimizationApp ..> DeliveryRouteOptimizerContext : uses
+    DeliveryOptimizationApp ..> DeliveryRouteOptimizationContext : uses
     DeliveryOptimizationApp ..> DeliveryScenario : uses
     DeliveryOptimizationApp ..> DeliveryScenarioFactory : uses
     DeliveryOptimizationApp ..> ConsoleOptimizationLogger : uses
-    DeliveryOptimizationApp ..> BruteForceOptimizationStrategy : uses
-    DeliveryOptimizationApp ..> GreedyNearestNeighborStrategy : uses
-    DeliveryOptimizationApp ..> PriorityBasedOptimizationStrategy : uses
     DeliveryOptimizationApp ..> HaversineDistanceCalculator : uses
 
     ConsoleOptimizationLogger ..> RouteResult : uses
 
-    Main ..> DeliveryOptimizationApp : delegates
-
-    %% Return types and method parameters
+    %% Return types
     RouteOptimizationStrategy ..> RouteResult : returns
-    DeliveryRouteOptimizerContext ..> RouteResult : returns
+    DeliveryRouteOptimizationContext ..> RouteResult : returns
 ```
 
 ## 🎯 Design Pattern Relationships
@@ -269,34 +231,28 @@ classDiagram
 ### 1. **Strategy Pattern** 
 ```mermaid
 classDiagram
-    class Context["DeliveryRouteOptimizerContext<br/>📋 Context"]
+    class Context["DeliveryRouteOptimizationContext<br/>📋 Context"]
     class Strategy["RouteOptimizationStrategy<br/>🎯 Strategy Interface"]
-    class ConcreteStrategy1["BruteForceOptimizationStrategy<br/>🔍 Concrete Strategy A"]
-    class ConcreteStrategy2["GreedyNearestNeighborStrategy<br/>⚡ Concrete Strategy B"]
-    class ConcreteStrategy3["PriorityBasedOptimizationStrategy<br/>📊 Concrete Strategy C"]
-    
+    class ConcreteStrategy["ExhaustiveSearchOptimizationStrategy<br/>🧠 Concrete Strategy"]
+
     Context *-- Strategy : has-a
-    Strategy <|.. ConcreteStrategy1 : implements
-    Strategy <|.. ConcreteStrategy2 : implements  
-    Strategy <|.. ConcreteStrategy3 : implements
-    
+    Strategy <|.. ConcreteStrategy : implements
+
     note for Context "Manages strategy selection<br/>and delegates optimization"
     note for Strategy "Defines optimization<br/>algorithm interface"
-    note for ConcreteStrategy1 "O(n!) - Optimal solution<br/>for small datasets"
-    note for ConcreteStrategy2 "O(n²) - Fast approximation<br/>for large datasets"
-    note for ConcreteStrategy3 "O(n log n) - Business<br/>priority driven"
+    note for ConcreteStrategy "O(n!) - Optimal solution<br/>for small datasets"
 ```
 
 ### 2. **Observer Pattern**
 ```mermaid
 classDiagram
-    class Subject["DeliveryRouteOptimizerContext<br/>📡 Subject"]
+    class Subject["DeliveryRouteOptimizationContext<br/>📡 Subject"]
     class Observer["RouteOptimizationObserver<br/>👁️ Observer Interface"]
     class ConcreteObserver["ConsoleOptimizationLogger<br/>🖥️ Concrete Observer"]
-    
+
     Subject o-- Observer : notifies
     Observer <|.. ConcreteObserver : implements
-    
+
     note for Subject "Notifies observers of<br/>optimization events"
     note for Observer "Defines observation<br/>callback interface"
     note for ConcreteObserver "Logs progress and results<br/>to console with emojis"
@@ -324,66 +280,52 @@ classDiagram
 
 ```mermaid
 graph TD
-    subgraph "🏢 com.shortestroute"
-        A[Main.java]
-    end
-    
     subgraph "🚀 com.deliveryoptimizer"
         B[DeliveryOptimizationApp]
-        C[DeliveryRouteOptimizerContext]
+        B2[DeliveryRouteOptimizationContext]
     end
-    
-    subgraph "📋 com.deliveryoptimizer.domain"
+    subgraph "📋 com.deliveryoptimizer.core"
         D[Location]
         E[DeliveryOrder]
         F[RouteResult]
         G[RouteAction]
-        H[Priority]
+        H[Task]
     end
-    
-    subgraph "🎯 com.deliveryoptimizer.strategy"
+    subgraph "🎯 com.deliveryoptimizer.optimizationstrategy"
         I[RouteOptimizationStrategy]
-        J[BruteForceOptimizationStrategy]
-        K[GreedyNearestNeighborStrategy]
-        L[PriorityBasedOptimizationStrategy]
+        J[ExhaustiveSearchOptimizationStrategy]
     end
-    
-    subgraph "📐 com.deliveryoptimizer.calculator"
+    subgraph "📐 com.deliveryoptimizer.distancestrategy"
         M[DistanceCalculator]
         N[HaversineDistanceCalculator]
     end
-    
-    subgraph "👁️ com.deliveryoptimizer.observer"
+    subgraph "👁️ com.deliveryoptimizer.loggingobserver"
         O[RouteOptimizationObserver]
         P[ConsoleOptimizationLogger]
     end
-    
-    subgraph "🏭 com.deliveryoptimizer.factory"
+    subgraph "🏭 com.deliveryoptimizer.scenariofactory"
         Q[DeliveryScenario]
         R[DeliveryScenarioFactory]
     end
-    
     subgraph "🛠️ com.deliveryoptimizer.util"
-        S[DeliveryDataGenerator]
+        S[TaskSequenceGenerator]
     end
-    
+    subgraph "🔢 com.deliveryoptimizer.constants"
+        T[PriorityEnum]
+    end
     %% Dependencies
-    A --> B
-    B --> C
     B --> Q
     B --> R
     B --> P
-    C --> I
-    C --> M
+    B --> B2
+    B2 --> I
     I --> D
     I --> E
     I --> F
     J --> I
-    K --> I
-    L --> I
     N --> M
     P --> O
-    E --> H
+    E --> T
     E --> D
     F --> D
     G --> D

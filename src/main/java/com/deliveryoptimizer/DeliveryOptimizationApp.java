@@ -1,6 +1,5 @@
 package com.deliveryoptimizer;
 
-import com.deliveryoptimizer.controller.DeliveryRouteOptimizationController;
 import com.deliveryoptimizer.optimizationstrategy.ExhaustiveSearchOptimizationStrategy;
 import com.deliveryoptimizer.distancestrategy.HaversineDistanceCalculator;
 import com.deliveryoptimizer.core.RouteResult;
@@ -42,7 +41,7 @@ public class DeliveryOptimizationApp {
         System.out.println(scenario);
         
         // Use the new Controller with brute force strategy
-        DeliveryRouteOptimizationController controller = new DeliveryRouteOptimizationController(
+        DeliveryRouteOptimizationContext controller = new DeliveryRouteOptimizationContext(
             new ExhaustiveSearchOptimizationStrategy(),
             new HaversineDistanceCalculator(),
             20.0
