@@ -103,7 +103,9 @@ public class DeliveryRouteOptimizationContext {
      */
     public List<RouteResult> compareOptimizationStrategies(Location startLocation, List<DeliveryOrder> orders) {
         List<RouteOptimizationStrategy> strategies = Arrays.asList(
-            new ExhaustiveSearchOptimizationStrategy()
+            new ExhaustiveSearchOptimizationStrategy(),
+            new com.deliveryoptimizer.optimizationstrategy.GreedyNearestNeighborStrategy(),
+            new com.deliveryoptimizer.optimizationstrategy.PriorityBasedOptimizationStrategy()
         );
         
         List<RouteResult> results = new ArrayList<>();

@@ -19,13 +19,17 @@ Given a delivery agent at a starting location with multiple food orders from dif
 - **Context Pattern**: Algorithm coordination
 
 
-### Algorithm Available
+### Algorithms Available
 1. **Exhaustive Search Optimization** - O(n!) complexity, optimal solution
+2. **Greedy Nearest Neighbor** - Fast, suboptimal, chooses closest next stop
+3. **Priority-Based Optimization** - Always delivers highest priority order first
 
 ## 📋 Features
 
 
 ✅ **Exhaustive Search Optimization** for optimal route calculation  
+✅ **Greedy Nearest Neighbor** for fast, approximate route calculation  
+✅ **Priority-Based Optimization** for priority-aware delivery  
 ✅ **Real-time Progress Monitoring** using Observer pattern  
 ✅ **Comprehensive Logging** with emoji-enhanced output  
 ✅ **Performance Benchmarking** and execution time analysis  

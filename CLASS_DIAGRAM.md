@@ -99,7 +99,18 @@ classDiagram
         +String getStrategyName()
     }
 
+
     class ExhaustiveSearchOptimizationStrategy {
+        +RouteResult optimizeRoute(Location, List~DeliveryOrder~, DistanceCalculator, double)
+        +String getStrategyName()
+    }
+
+    class GreedyNearestNeighborStrategy {
+        +RouteResult optimizeRoute(Location, List~DeliveryOrder~, DistanceCalculator, double)
+        +String getStrategyName()
+    }
+
+    class PriorityBasedOptimizationStrategy {
         +RouteResult optimizeRoute(Location, List~DeliveryOrder~, DistanceCalculator, double)
         +String getStrategyName()
     }
@@ -195,7 +206,10 @@ classDiagram
     DeliveryRouteOptimizationContext o-- RouteOptimizationObserver : observers
 
     %% Strategy Pattern Implementation
+
     RouteOptimizationStrategy <|.. ExhaustiveSearchOptimizationStrategy : implements
+    RouteOptimizationStrategy <|.. GreedyNearestNeighborStrategy : implements
+    RouteOptimizationStrategy <|.. PriorityBasedOptimizationStrategy : implements
     DistanceCalculator <|.. HaversineDistanceCalculator : implements
 
     %% Observer Pattern Implementation
