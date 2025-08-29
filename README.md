@@ -116,13 +116,16 @@ delivery-route-optimizer/
 See [CLASS_DIAGRAM.md](CLASS_DIAGRAM.md) for detailed class relationships and system architecture visualization using Mermaid diagrams.
 
 
+
 ## 📈 Performance Analysis
 
-The application includes built-in performance benchmarking:
+The application includes built-in performance benchmarking for all algorithms:
 
-| Strategy | Time Complexity | Best For |
-|----------|----------------|----------|
-| Exhaustive Search | O(n!) | Small datasets, optimal solution required |
+| Strategy                      | Time Complexity | Best For                                 |
+|-------------------------------|----------------|------------------------------------------|
+| Exhaustive Search Optimization| O(n!)          | Small datasets, optimal solution required |
+| Greedy Nearest Neighbor       | O(n^2)         | Fast, large datasets, approximate routes  |
+| Priority-Based Optimization   | O(n^2)         | Fast, priority-sensitive deliveries       |
 
 ## 🔧 Extending the System
 
